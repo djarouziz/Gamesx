@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anime X - فعاليات الأنمي</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap');
+
+:root {
+  --bg-deep: #050510;
+  --bg-card: #0d0d1f;
+  --bg-card2: #111127;
+  --neon-cyan: #00f5ff;
+  --neon-pink: #ff00c8;
+  --neon-purple: #9d00ff;
+  --neon-yellow: #ffee00;
+  --neon-green: #00ff88;
+  --text-main: #e8e8ff;
+  --text-dim: #7070aa;
+  --border-glow: rgba(0,245,255,0.25);
+  --font: 'Tajawal', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg-deep);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(157,0,255,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,245,255,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(255,0,200,0.04) 0%, transparent 70%);
+}
+#stars { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.star { position:absolute; border-radius:50%; animation: twinkle linear infinite; }
+@keyframes twinkle { 0%,100%{opacity:.2;transform:scale(1);}50%{opacity:1;transform:scale(1.4);} }
+#app { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:16px; }
+
+/* HEADER */
+header { text-align:center; padding:32px 0 24px; }
+.logo-text {
+  font-size:clamp(2.4rem,8vw,4rem); font-weight:900; letter-spacing:4px;
+  background:linear-gradient(135deg,var(--neon-cyan),var(--neon-pink),var(--neon-purple));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:logoGlow 3s ease-in-out infinite alternate;
+}
+@keyframes logoGlow {
+  from{filter:drop-shadow(0 0 15px rgba(0,245,255,0.4)) drop-shadow(0 0 30px rgba(255,0,200,0.2));}
+  to{filter:drop-shadow(0 0 25px rgba(0,245,255,0.8)) drop-shadow(0 0 50px rgba(157,0,255,0.4));}
+}
+.logo-sub { font-size:.9rem; color:var(--neon-pink); letter-spacing:6px; text-transform:uppercase; margin-top:4px; opacity:.8; }
+.page-badge { display:inline-block; margin-top:10px; padding:4px 16px; border:1px solid var(--neon-cyan); border-radius:20px; font-size:.75rem; color:var(--neon-cyan); letter-spacing:2px; background:rgba(0,245,255,0.05); }
+
+/* NAV */
+nav { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:24px 0; }
+.nav-btn {
+  padding:10px 18px; border:1px solid var(--border-glow); background:var(--bg-card);
+  color:var(--text-main); border-radius:50px; font-family:var(--font); font-size:.85rem;
+  font-weight:700; cursor:pointer; transition:all .25s; position:relative; overflow:hidden;
+}
+.nav-btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,var(--neon-cyan),var(--neon-pink)); opacity:0; transition:opacity .25s; }
+.nav-btn span { position:relative; z-index:1; }
+.nav-btn:hover,.nav-btn.active { border-color:var(--neon-cyan); box-shadow:0 0 20px rgba(0,245,255,0.4),inset 0 0 20px rgba(0,245,255,0.05); transform:translateY(-2px); }
+.nav-btn.active::before { opacity:.12; }
+.nav-btn .icon { margin-left:6px; font-size:1rem; }
+
+/* SCREENS */
+.screen { display:none; animation:fadeIn .4s ease; }
+.screen.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+
+/* CARD */
+.card { background:var(--bg-card); border:1px solid var(--border-glow); border-radius:16px; padding:24px; margin-bottom:16px; position:relative; overflow:hidden; }
+.card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,transparent,var(--neon-cyan),var(--neon-pink),transparent); }
+
+/* SECTION TITLE */
+.section-title { text-align:center; font-size:1.6rem; font-weight:900; margin-bottom:20px; background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.section-icon { font-size:2rem; display:block; margin-bottom:8px; text-align:center; }
+
+/* QUIZ */
+.quiz-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+.quiz-score-box,.quiz-timer-box { background:var(--bg-card2); border:1px solid var(--border-glow); border-radius:10px; padding:8px 16px; font-size:.85rem; color:var(--text-dim); }
+.quiz-score-box span,.quiz-timer-box span { color:var(--neon-cyan); font-weight:900; font-size:1.1rem; }
+.timer-bar-wrap { height:6px; background:rgba(255,255,255,.06); border-radius:3px; overflow:hidden; margin-bottom:20px; }
+.timer-bar { height:100%; background:linear-gradient(90deg,var(--neon-green),var(--neon-cyan)); border-radius:3px; transition:width .1s linear,background .5s; }
+.timer-bar.danger { background:linear-gradient(90deg,var(--neon-pink),#ff4400); }
+.question-num { font-size:.8rem; color:var(--text-dim); margin-bottom:8px; text-align:center; }
+.question-text { font-size:1.15rem; font-weight:700; text-align:center; margin-bottom:24px; line-height:1.6; }
+.options-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:480px){ .options-grid{grid-template-columns:1fr;} }
+.option-btn { padding:14px 16px; background:var(--bg-card2); border:1px solid rgba(255,255,255,.1); border-radius:12px; color:var(--text-main); font-family:var(--font); font-size:.95rem; font-weight:700; cursor:pointer; transition:all .2s; text-align:center; }
+.option-btn:hover { border-color:var(--neon-cyan); transform:translateY(-2px); box-shadow:0 4px 15px rgba(0,245,255,.2); }
+.option-btn.correct { background:rgba(0,255,136,.15); border-color:var(--neon-green); box-shadow:0 0 20px rgba(0,255,136,.3); animation:correctPop .4s ease; }
+.option-btn.wrong { background:rgba(255,0,100,.15); border-color:#ff0064; box-shadow:0 0 20px rgba(255,0,100,.3); animation:wrongShake .4s ease; }
+@keyframes correctPop { 0%{transform:scale(1);}50%{transform:scale(1.06);}100%{transform:scale(1);} }
+@keyframes wrongShake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);} }
+
+/* RESULT */
+.result-wrap { text-align:center; padding:32px 16px; }
+.result-rank { font-size:3.5rem; margin-bottom:8px; animation:bounce 1s ease infinite alternate; }
+@keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-10px);}}
+.result-title { font-size:1.8rem; font-weight:900; margin-bottom:8px; background:linear-gradient(135deg,var(--neon-yellow),var(--neon-pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.result-score { font-size:1.1rem; color:var(--text-dim); margin-bottom:20px; }
+.result-score span { color:var(--neon-cyan); font-weight:900; font-size:1.4rem; }
+
+/* CHARACTER */
+.char-emoji-display { width:180px; height:180px; border-radius:50%; border:3px solid var(--neon-pink); box-shadow:0 0 30px rgba(255,0,200,.4); background:linear-gradient(135deg,var(--bg-card2),#1a0030); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:4.5rem; animation:charGlow 2s ease-in-out infinite alternate; }
+@keyframes charGlow { from{box-shadow:0 0 20px rgba(255,0,200,.4);}to{box-shadow:0 0 40px rgba(255,0,200,.7),0 0 60px rgba(157,0,255,.3);} }
+.char-hint { text-align:center; font-size:.85rem; color:var(--text-dim); margin-bottom:16px; padding:8px 12px; background:var(--bg-card2); border-radius:8px; }
+
+/* WHEEL */
+.wheel-wrap { display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px 0; }
+.wheel-container { position:relative; }
+canvas#wheelCanvas { border-radius:50%; filter:drop-shadow(0 0 20px rgba(157,0,255,.6)); max-width:300px; max-height:300px; }
+.wheel-pointer { position:absolute; top:-16px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent; border-top:28px solid var(--neon-yellow); filter:drop-shadow(0 0 8px var(--neon-yellow)); z-index:10; }
+.spin-btn { padding:14px 40px; background:linear-gradient(135deg,var(--neon-purple),var(--neon-pink)); border:none; border-radius:50px; color:#fff; font-family:var(--font); font-size:1.1rem; font-weight:900; cursor:pointer; transition:all .25s; box-shadow:0 0 25px rgba(157,0,255,.5); letter-spacing:2px; }
+.spin-btn:hover { transform:scale(1.06); box-shadow:0 0 40px rgba(157,0,255,.8); }
+.spin-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.challenge-display { width:100%; max-width:420px; background:var(--bg-card2); border:2px solid var(--neon-purple); border-radius:16px; padding:20px; text-align:center; min-height:80px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 20px rgba(157,0,255,.2); }
+.challenge-display.revealed { animation:challengeReveal .5s ease; }
+@keyframes challengeReveal { 0%{transform:scale(.8);opacity:0;}60%{transform:scale(1.05);}100%{transform:scale(1);opacity:1;} }
+.challenge-text { font-size:1.05rem; font-weight:700; color:var(--neon-cyan); line-height:1.5; }
+.challenge-placeholder { color:var(--text-dim); font-size:.9rem; }
+
+/* LEADERBOARD */
+.lb-form { display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap; }
+.lb-input { flex:1; min-width:160px; padding:12px 16px; background:var(--bg-card2); border:1px solid var(--border-glow); border-radius:10px; color:var(--text-main); font-family:var(--font); font-size:.95rem; outline:none; transition:border-color .2s; }
+.lb-input:focus { border-color:var(--neon-cyan); box-shadow:0 0 10px rgba(0,245,255,.2); }
+.lb-add-btn { padding:12px 20px; background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple)); border:none; border-radius:10px; color:#000; font-family:var(--font); font-weight:900; font-size:.9rem; cursor:pointer; transition:all .2s; }
+.lb-add-btn:hover { transform:scale(1.05); }
+.lb-table { width:100%; border-collapse:collapse; }
+.lb-table th { padding:10px 14px; text-align:right; font-size:.8rem; color:var(--text-dim); border-bottom:1px solid var(--border-glow); letter-spacing:1px; }
+.lb-table td { padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.04); font-size:.95rem; }
+.lb-table tr:hover td { background:rgba(0,245,255,.03); }
+.rank-badge { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; font-weight:900; font-size:.85rem; }
+.rank-1 { background:linear-gradient(135deg,#ffd700,#ff8c00); color:#000; box-shadow:0 0 12px rgba(255,215,0,.5); }
+.rank-2 { background:linear-gradient(135deg,#c0c0c0,#808080); color:#000; }
+.rank-3 { background:linear-gradient(135deg,#cd7f32,#8b4513); color:#fff; }
+.rank-other { background:var(--bg-card2); color:var(--text-dim); border:1px solid var(--border-glow); }
+.player-name { font-weight:700; }
+.player-pts { color:var(--neon-cyan); font-weight:900; }
+
+/* BUTTONS */
+.btn-primary { padding:12px 28px; background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple)); border:none; border-radius:50px; color:#000; font-family:var(--font); font-weight:900; font-size:1rem; cursor:pointer; transition:all .25s; box-shadow:0 0 20px rgba(0,245,255,.3); }
+.btn-primary:hover { transform:scale(1.05); box-shadow:0 0 35px rgba(0,245,255,.6); }
+.btn-secondary { padding:12px 28px; background:transparent; border:2px solid var(--neon-pink); border-radius:50px; color:var(--neon-pink); font-family:var(--font); font-weight:900; font-size:1rem; cursor:pointer; transition:all .25s; }
+.btn-secondary:hover { background:rgba(255,0,200,.1); box-shadow:0 0 20px rgba(255,0,200,.3); transform:scale(1.05); }
+.btn-share { padding:12px 28px; background:linear-gradient(135deg,#1877f2,#0b5fcc); border:none; border-radius:50px; color:#fff; font-family:var(--font); font-weight:900; font-size:1rem; cursor:pointer; transition:all .25s; box-shadow:0 0 20px rgba(24,119,242,.4); }
+.btn-share:hover { transform:scale(1.05); box-shadow:0 0 35px rgba(24,119,242,.7); }
+.btn-row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:20px; }
+
+/* WELCOME */
+.welcome-emoji { font-size:4rem; display:block; margin-bottom:12px; animation:float 3s ease-in-out infinite; text-align:center; }
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.welcome-title { font-size:1.5rem; font-weight:900; margin-bottom:8px; text-align:center; }
+.welcome-desc { color:var(--text-dim); font-size:.95rem; line-height:1.7; max-width:500px; margin:0 auto 24px; text-align:center; }
+.features-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:24px; }
+@media(max-width:420px){ .features-grid{grid-template-columns:1fr;} }
+.feature-card { background:var(--bg-card2); border:1px solid var(--border-glow); border-radius:12px; padding:16px; text-align:center; cursor:pointer; transition:all .25s; }
+.feature-card:hover { border-color:var(--neon-cyan); transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,245,255,.15); }
+.feature-card .f-icon { font-size:2rem; display:block; margin-bottom:8px; }
+.feature-card .f-name { font-weight:700; font-size:.9rem; }
+.feature-card .f-desc { font-size:.75rem; color:var(--text-dim); margin-top:4px; }
+
+/* PROGRESS */
+.progress-dots { display:flex; gap:4px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+.dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.1); transition:background .3s; }
+.dot.done { background:var(--neon-green); box-shadow:0 0 6px var(--neon-green); }
+.dot.current { background:var(--neon-cyan); box-shadow:0 0 8px var(--neon-cyan); animation:pulse 1s ease-in-out infinite; }
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.4);}}
+
+/* TOAST */
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--bg-card2); border:1px solid var(--neon-cyan); color:var(--neon-cyan); padding:12px 24px; border-radius:50px; font-weight:700; font-size:.9rem; z-index:9999; transition:transform .3s ease; box-shadow:0 0 20px rgba(0,245,255,.3); white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg-deep);}
+::-webkit-scrollbar-thumb{background:var(--neon-purple);border-radius:3px;}
+
+footer { text-align:center; padding:24px 0; color:var(--text-dim); font-size:.8rem; }
+footer span { color:var(--neon-pink); }
+
+/* STATS ROW */
+.stats-row { display:flex; justify-content:space-around; text-align:center; gap:16px; flex-wrap:wrap; background:var(--bg-card2); border-radius:10px; padding:14px; margin-bottom:20px; }
+.stat-item .stat-val { font-size:1.4rem; font-weight:900; }
+.stat-item .stat-lbl { font-size:.75rem; color:var(--text-dim); }
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-text">ANIME X</div>
+    <div class="logo-sub">فعاليات الأنمي</div>
+    <div class="page-badge">🌟 صفحة Anime X الرسمية</div>
+  </header>
+
+  <!-- NAV -->
+  <nav>
+    <button class="nav-btn active" onclick="showScreen('welcome')" id="nav-welcome"><span><span class="icon">🏠</span>الرئيسية</span></button>
+    <button class="nav-btn" onclick="showScreen('quiz')" id="nav-quiz"><span><span class="icon">🧠</span>اختبار الأنمي</span></button>
+    <button class="nav-btn" onclick="showScreen('guess')" id="nav-guess"><span><span class="icon">🎭</span>تخمين الشخصية</span></button>
+    <button class="nav-btn" onclick="showScreen('wheel')" id="nav-wheel"><span><span class="icon">🎡</span>عجلة الحظ</span></button>
+    <button class="nav-btn" onclick="showScreen('leaderboard')" id="nav-leaderboard"><span><span class="icon">🏆</span>المتصدرون</span></button>
+  </nav>
+
+  <!-- ══ WELCOME ══ -->
+  <div id="screen-welcome" class="screen active">
+    <div class="card">
+      <span class="welcome-emoji">⛩️</span>
+      <div class="welcome-title">أهلاً في عالم Anime X!</div>
+      <p class="welcome-desc">اختبر معلوماتك عن الأنمي، تحدى أصدقاءك، وتصدر لوحة المتصدرين. هل أنت أسطورة الأنمي؟ 🔥</p>
+      <div class="features-grid">
+        <div class="feature-card" onclick="showScreen('quiz')">
+          <span class="f-icon">🧠</span>
+          <div class="f-name">اختبار الأنمي</div>
+          <div class="f-desc">30 سؤال — 4 مستويات</div>
+        </div>
+        <div class="feature-card" onclick="showScreen('guess')">
+          <span class="f-icon">🎭</span>
+          <div class="f-name">تخمين الشخصية</div>
+          <div class="f-desc">15 شخصية — من هي؟</div>
+        </div>
+        <div class="feature-card" onclick="showScreen('wheel')">
+          <span class="f-icon">🎡</span>
+          <div class="f-name">عجلة الحظ</div>
+          <div class="f-desc">تحديات عشوائية مثيرة</div>
+        </div>
+        <div class="feature-card" onclick="showScreen('leaderboard')">
+          <span class="f-icon">🏆</span>
+          <div class="f-name">لوحة المتصدرين</div>
+          <div class="f-desc">أفضل اللاعبين</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ QUIZ ══ -->
+  <div id="screen-quiz" class="screen">
+    <div id="quiz-start" class="card">
+      <span class="section-icon">🧠</span>
+      <div class="section-title">اختبار الأنمي</div>
+      <p style="text-align:center;color:var(--text-dim);margin-bottom:20px;font-size:.95rem;line-height:1.8;">
+        ٣٠ سؤال من أشهر الأنميات<br>
+        <strong style="color:var(--neon-cyan)">15 ثانية</strong> للإجابة عن كل سؤال<br>
+        هل ستثبت أنك <strong style="color:var(--neon-yellow)">أسطورة الأنمي</strong>؟ ⚡
+      </p>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-val" style="color:var(--neon-cyan)">30</div><div class="stat-lbl">سؤال</div></div>
+        <div class="stat-item"><div class="stat-val" style="color:var(--neon-pink)">15s</div><div class="stat-lbl">لكل سؤال</div></div>
+        <div class="stat-item"><div class="stat-val" style="color:var(--neon-yellow)">4</div><div class="stat-lbl">مستويات</div></div>
+        <div class="stat-item"><div class="stat-val" style="color:var(--neon-green)">∞</div><div class="stat-lbl">تحديات</div></div>
+      </div>
+      <div style="text-align:center;"><button class="btn-primary" onclick="startQuiz()">🚀 ابدأ الاختبار</button></div>
+    </div>
+    <div id="quiz-game" style="display:none;">
+      <div class="card">
+        <div class="quiz-header">
+          <div class="quiz-score-box">النقاط: <span id="q-score">0</span></div>
+          <div class="quiz-score-box">السؤال: <span id="q-num">1</span>/30</div>
+          <div class="quiz-timer-box">⏱ <span id="q-timer">15</span>s</div>
+        </div>
+        <div class="timer-bar-wrap"><div class="timer-bar" id="q-timer-bar" style="width:100%"></div></div>
+        <div class="progress-dots" id="q-progress"></div>
+        <div class="question-num" id="q-category"></div>
+        <div class="question-text" id="q-question"></div>
+        <div class="options-grid" id="q-options"></div>
+      </div>
+    </div>
+    <div id="quiz-result" style="display:none;">
+      <div class="card result-wrap">
+        <div class="result-rank" id="r-emoji">⭐</div>
+        <div class="result-title" id="r-rank">أسطورة الأنمي</div>
+        <div class="result-score">حصلت على <span id="r-score">0</span> من 30 نقطة</div>
+        <p id="r-desc" style="color:var(--text-dim);margin-bottom:20px;font-size:.95rem;line-height:1.6;"></p>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="startQuiz()">🔄 العب مجدداً</button>
+          <button class="btn-share" onclick="shareResult('quiz')">📤 شارك على فيسبوك</button>
+          <button class="btn-secondary" onclick="saveToLeaderboard()">🏆 احفظ نتيجتي</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ GUESS ══ -->
+  <div id="screen-guess" class="screen">
+    <div id="guess-start" class="card">
+      <span class="section-icon">🎭</span>
+      <div class="section-title">تخمين الشخصية</div>
+      <p style="text-align:center;color:var(--text-dim);margin-bottom:20px;font-size:.95rem;line-height:1.8;">
+        ستظهر رمز شخصية أنمي مع تلميح 💡<br>
+        اختر الاسم الصحيح من بين ٤ خيارات<br>
+        كل إجابة صحيحة = نقطة ⭐
+      </p>
+      <div style="text-align:center;"><button class="btn-primary" onclick="startGuess()">🎮 ابدأ التخمين</button></div>
+    </div>
+    <div id="guess-game" style="display:none;">
+      <div class="card">
+        <div class="quiz-header">
+          <div class="quiz-score-box">النقاط: <span id="g-score">0</span></div>
+          <div class="quiz-score-box">السؤال: <span id="g-num">1</span>/15</div>
+        </div>
+        <div class="char-emoji-display" id="g-char-img">❓</div>
+        <div class="char-hint" id="g-hint">من هذه الشخصية؟ 🤔</div>
+        <div class="options-grid" id="g-options"></div>
+      </div>
+    </div>
+    <div id="guess-result" style="display:none;">
+      <div class="card result-wrap">
+        <div class="result-rank">🎭</div>
+        <div class="result-title">انتهى التخمين!</div>
+        <div class="result-score">أجبت صح على <span id="gr-score">0</span> من 15</div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="startGuess()">🔄 العب مجدداً</button>
+          <button class="btn-share" onclick="shareResult('guess')">📤 شارك على فيسبوك</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ WHEEL ══ -->
+  <div id="screen-wheel" class="screen">
+    <div class="card">
+      <span class="section-icon">🎡</span>
+      <div class="section-title">عجلة الحظ</div>
+      <div class="wheel-wrap">
+        <div class="wheel-container">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheelCanvas" width="300" height="300"></canvas>
+        </div>
+        <button class="spin-btn" id="spin-btn" onclick="spinWheel()">🎲 أدر العجلة</button>
+        <div class="challenge-display" id="challenge-display">
+          <span class="challenge-placeholder">أدر العجلة لتحصل على تحديك! 🎯</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LEADERBOARD ══ -->
+  <div id="screen-leaderboard" class="screen">
+    <div class="card">
+      <span class="section-icon">🏆</span>
+      <div class="section-title">لوحة المتصدرين</div>
+      <div class="lb-form">
+        <input class="lb-input" id="lb-name" placeholder="اسمك..." maxlength="20">
+        <input class="lb-input" id="lb-pts" placeholder="نقاطك (0-30)" type="number" min="0" max="30" style="max-width:140px;">
+        <button class="lb-add-btn" onclick="addToLeaderboard()">إضافة ✨</button>
+      </div>
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>اللاعب</th>
+            <th>النقاط</th>
+            <th>المستوى</th>
+          </tr>
+        </thead>
+        <tbody id="lb-tbody"></tbody>
+      </table>
+      <div id="lb-empty" style="text-align:center;color:var(--text-dim);padding:30px;display:none;">
+        لا يوجد لاعبون بعد 😴<br>العب وسجل نتيجتك!
+      </div>
+    </div>
+  </div>
+
+  <footer>صفحة <span>Anime X</span> — جميع حقوق الأنمي محفوظة 🌸</footer>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════
+   DATA — قابل للتعديل بسهولة
+══════════════════════════════════════════════ */
+
+// ── أسئلة الاختبار ──
+const QUIZ_QUESTIONS = [
+  { cat:"ناروتو 🍃", q:"ما هو اسم القرية التي ولد فيها ناروتو أوزوماكي؟", opts:["قرية الرمل","قرية الضباب","قرية الأوراق","قرية الصخر"], a:2 },
+  { cat:"ناروتو 🍃", q:"ما هي الوحش ذو الذيول التي يحتوي عليها ناروتو؟", opts:["الثعلب ذو الأربعة ذيول","الثعلب ذو التسعة ذيول","الدب ذو الثلاثة ذيول","التمساح ذو السبعة ذيول"], a:1 },
+  { cat:"ناروتو 🍃", q:"من هو معلم ناروتو الأول في مدرسة النينجا؟", opts:["جيرايا","إيروكا سينسي","كاكاشي","ساروتوبي"], a:1 },
+  { cat:"ناروتو 🍃", q:"ما هو الجوتسو الأشهر الذي ابتكره ناروتو؟", opts:["تشيدوري","راسينغان","أمترسو","تسوكويومي"], a:1 },
+  { cat:"ناروتو 🍃", q:"من هو زعيم تنظيم أكاتسوكي الحقيقي في بداية القصة؟", opts:["إيتاشي أوتشيها","ناغاتو / بين","كيساميا","أوبيتو"], a:1 },
+  { cat:"ون بيس ⚓", q:"ما هو هدف مونكي دي لوفي الأساسي في ون بيس؟", opts:["أن يصبح أقوى مقاتل","أن يجد كنز وان بيس ويصبح ملك القراصنة","أن ينتقم من المارينز","أن يجد عائلته المفقودة"], a:1 },
+  { cat:"ون بيس ⚓", q:"ما هي فاكهة الشيطان التي أكلها لوفي وأعطته جسماً مطاطياً؟", opts:["فاكهة العنقاء","فاكهة المطاط (Gomu Gomu)","فاكهة النور","فاكهة المغناطيس"], a:1 },
+  { cat:"ون بيس ⚓", q:"كم عدد السيوف التي يحملها زورو في أسلوبه الشهير؟", opts:["سيف واحد","سيفان","ثلاثة سيوف","أربعة سيوف"], a:2 },
+  { cat:"ون بيس ⚓", q:"من هو طباخ طاقم قبعة القش؟", opts:["نامي","أوسوب","سانجي","فرانكي"], a:2 },
+  { cat:"ون بيس ⚓", q:"ما هو اسم أخ لوفي الذي أُعدم في حرب ماريفورد؟", opts:["سابو","إيس (آس)","لوغ","ريلي"], a:1 },
+  { cat:"دراغون بول 🐉", q:"من هو أول عدو قوي واجهه غوكو كراشد بالغ في DBZ؟", opts:["فريزا","سيل","بيكولو الكبير","رادتز أخوه"], a:3 },
+  { cat:"دراغون بول 🐉", q:"كم كرة التنين يجب جمعها لاستدعاء التنين شن لونغ؟", opts:["3 كرات","5 كرات","7 كرات","9 كرات"], a:2 },
+  { cat:"دراغون بول 🐉", q:"ضد أي عدو تحوّل غوكو إلى Super Saiyan لأول مرة؟", opts:["سيل","فريزا","بيكولو","رادتز"], a:1 },
+  { cat:"دراغون بول 🐉", q:"ما اسم ابن غوكو الأكبر الذي رُبّي من قبل بيكولو؟", opts:["تروانكس","غوهان","غوتن","بردوك"], a:1 },
+  { cat:"دراغون بول 🐉", q:"من هو أصغر شخص وصل مستوى Super Saiyan 2 في DBZ؟", opts:["غوكو","غوهان","تروانكس","فيجيتا"], a:1 },
+  { cat:"هجوم العمالقة ⚔️", q:"ما هو اسم الفيلق الذي ينضم إليه إيرين يغر بعد التخرج؟", opts:["الفيلق المدرع","الفيلق الاستكشافي","الفيلق الثالث","حرس الملك"], a:1 },
+  { cat:"هجوم العمالقة ⚔️", q:"ما هو العملاق الذي يمتلكه إيرين يغر؟", opts:["عملاق العظام","عملاق المهاجم","عملاق الجدار الكولوسي","عملاق الأنثى"], a:1 },
+  { cat:"هجوم العمالقة ⚔️", q:"ما اسم والدة إيرين يغر التي أُكلت أمامه؟", opts:["هانجي زوي","ميكاسا أكرمان","كارلا يغر","أرمين آرليرت"], a:2 },
+  { cat:"هجوم العمالقة ⚔️", q:"ما هو مدى طول العمالقة الطبيعية المختلفة؟", opts:["1-3 متر","3-15 متر","10-30 متر","15-50 متر"], a:1 },
+  { cat:"هجوم العمالقة ⚔️", q:"من هو قائد الفيلق الاستكشافي الكاريزمي في القصة؟", opts:["إيرفين سميث","ليفاي أكرمان","هانجي زوي","مارلو فريمان"], a:0 },
+  { cat:"قاتل الشياطين 🔥", q:"ما هو هدف تانجيرو الرئيسي في رحلته؟", opts:["أن يصبح ملك قاتلي الشياطين","تحويل أخته نيزوكو إلى إنسان","قتل موزان كيبوتسوجي فقط","قيادة برلمان هاشيرا"], a:1 },
+  { cat:"قاتل الشياطين 🔥", q:"ما هو أسلوب التنفس الأول الذي تعلمه تانجيرو؟", opts:["تنفس اللهب","تنفس الماء","تنفس الرعد","تنفس الريح"], a:1 },
+  { cat:"قاتل الشياطين 🔥", q:"ما اسم الشيطان الأعلى رتبةً والأقوى في القصة؟", opts:["أكازا","موزان كيبوتسوجي","دوما","كوكوشيبو"], a:1 },
+  { cat:"قاتل الشياطين 🔥", q:"من هو الصاحب الجبان الذي يمتلك تنفس الرعد؟", opts:["إينوسوكي هاشيبيرا","ميتسوري كانرودجي","زينيتسو أغاتسوما","غيو توميوكا"], a:2 },
+  { cat:"قاتل الشياطين 🔥", q:"ما هو شكل التنفس الأعلى مستوىً في قاتل الشياطين؟", opts:["تنفس الشمس","تنفس الظلام","تنفس النجوم","تنفس القمر"], a:0 },
+  { cat:"متنوع 🌟", q:"في أي أنمي يظهر المحقق الغامض L الذي يأكل الحلوى دائماً؟", opts:["بليتش","ديث نوت (Death Note)","ناروتو","فولميتال ألكيميست"], a:1 },
+  { cat:"متنوع 🌟", q:"من هو الطالب الذي يكتب في مذكرة الموت في Death Note؟", opts:["L لوولايت","لايت يوغامي","ريوك الشيطان","ميتسوبي يوتسوبا"], a:1 },
+  { cat:"متنوع 🌟", q:"في أنمي Fullmetal Alchemist Brotherhood، ما الذي يبحث عنه الأخوان إلريك؟", opts:["مذكرة الموت","حجر الفيلسوف","سيف أسطوري","ملك الشياطين"], a:1 },
+  { cat:"متنوع 🌟", q:"من هو بطل أنمي My Hero Academia الذي وُلد بدون قوة؟", opts:["كاتسوكي باكوغو","إيزاكو ميدوريا (ديكو)","شوتو تودوروكي","تيسو أيدو"], a:1 },
+  { cat:"متنوع 🌟", q:"في أنمي Haikyuu، ما هي الرياضة التي تدور حولها الأحداث؟", opts:["كرة القدم","كرة السلة","الكرة الطائرة","كرة اليد"], a:2 },
+];
+
+// ── شخصيات التخمين ──
+const CHARACTERS = [
+  { emoji:"🍥", name:"ناروتو أوزوماكي", anime:"ناروتو", hint:"يحب الراميين ويحمل روح الكيوبي - الثعلب ذو التسعة ذيول", wrong:["ساسوكي أوتشيها","مونكي دي لوفي","إيرين يغر"] },
+  { emoji:"⚓", name:"مونكي دي لوفي", anime:"ون بيس", hint:"يرتدي قبعة قش ويريد أن يصبح ملك القراصنة", wrong:["ناروتو أوزوماكي","سون غوكو","إيزاكو ميدوريا"] },
+  { emoji:"🐉", name:"سون غوكو", anime:"دراغون بول", hint:"يمتلك ذيل قرد ويتحول إلى Super Saiyan ويحب الأكل", wrong:["غوهان ابنه","تروانكس","فيجيتا"] },
+  { emoji:"🗡️", name:"رورونوا زورو", anime:"ون بيس", hint:"يحمل ثلاثة سيوف ويضع إحداها بفمه ونائم دائماً", wrong:["ساسوكي أوتشيها","كيلوا زولديك","بيكولو"] },
+  { emoji:"🔥", name:"تانجيرو كامادو", anime:"قاتل الشياطين", hint:"أخته تحوّلت إلى شيطانة ويمتلك حاسة شم قوية جداً", wrong:["إيرين يغر","ناروتو","شوتو تودوروكي"] },
+  { emoji:"🗼", name:"إيرين يغر", anime:"هجوم العمالقة", hint:"يصرخ دائماً 'الحرية!' ويتحول إلى عملاق مهاجم", wrong:["تانجيرو كامادو","ناروتو","لوفي"] },
+  { emoji:"🌙", name:"إيتاشي أوتشيها", anime:"ناروتو", hint:"يمتلك شارنغان وقتل عائلته لحماية القرية سراً", wrong:["ساسوكي أوتشيها","ماداره أوتشيها","أوبيتو"] },
+  { emoji:"📓", name:"لايت يوغامي", anime:"ديث نوت", hint:"طالب عبقري يكتب في مذكرة الموت ويريد خلق عالم مثالي", wrong:["المحقق L","ريوك الشيطان","كيرا المجهول"] },
+  { emoji:"💪", name:"إيزاكو ميدوريا (ديكو)", anime:"ماي هيرو أكاديميا", hint:"وُلد بدون قوة وورث قوة All Might ويكتب في دفتره دائماً", wrong:["كاتسوكي باكوغو","شوتو تودوروكي","كيريشيما"] },
+  { emoji:"⚡", name:"زينيتسو أغاتسوما", anime:"قاتل الشياطين", hint:"يبكي كثيراً لكنه يصبح أسرع البرق حين ينام", wrong:["إينوسوكي هاشيبيرا","تانجيرو","غيو توميوكا"] },
+  { emoji:"🎯", name:"كيلوا زولديك", anime:"هانتر×هانتر", hint:"من عائلة القتلة المأجورين ويحول يديه إلى برق ويحب الحلوى", wrong:["غون فريكس","ليوريو","كورابيكا"] },
+  { emoji:"⚔️", name:"ليفاي أكرمان", anime:"هجوم العمالقة", hint:"أقوى جندي في البشرية ويحب النظافة ويقاتل بطريقة غريبة", wrong:["إيرفين سميث","إيرين يغر","ميكاسا أكرمان"] },
+  { emoji:"🔮", name:"مادارا أوتشيها", anime:"ناروتو", hint:"أسطورة أوتشيها الأعظم يمتلك رينيغان ويريد السيطرة على العالم", wrong:["أوبيتو أوتشيها","هاشيراما سينجو","ناغاتو/بين"] },
+  { emoji:"🌸", name:"ساكورا هارونو", anime:"ناروتو", hint:"شعرها وردي وتحب ساسوكي وتعلمت الطب من تسونادي", wrong:["هيناتا هيوغا","تيمايي","إينو يامانكا"] },
+  { emoji:"🦅", name:"غون فريكس", anime:"هانتر×هانتر", hint:"يبحث عن أبيه جين ويصبح هانتر ويصادق كيلوا", wrong:["كيلوا زولديك","ليوريو","كورابيكا"] },
+];
+
+// ── تحديات العجلة ──
+const WHEEL_CHALLENGES = [
+  { color:"#ff00c8", text:"🎨 ارسم شخصية أنمي خلال دقيقة واحدة فقط!", icon:"🎨" },
+  { color:"#00f5ff", text:"📢 اذكر 5 أنميات تبدأ بحرف 'ن' في أقل من 30 ثانية!", icon:"📢" },
+  { color:"#9d00ff", text:"🦸 قلّد صوت أو حركة شخصية أنمي مشهورة!", icon:"🦸" },
+  { color:"#ffee00", text:"🎵 غنّي افتتاحية أنمي مشهور أمام الجميع!", icon:"🎵" },
+  { color:"#00ff88", text:"👿 صف شخصية شريرة بدون ذكر اسمها حتى يخمنها أحد!", icon:"👿" },
+  { color:"#ff6600", text:"💬 أكمل: 'أنا سأكون...' على طريقة ناروتو أوزوماكي!", icon:"💬" },
+  { color:"#ff00c8", text:"🎭 أدّي مشهداً حزيناً أو مثيراً من أنمي مشهور!", icon:"🎭" },
+  { color:"#00f5ff", text:"🏆 اختر: من هو أقوى شرير في تاريخ الأنمي؟ ولماذا؟", icon:"🏆" },
+  { color:"#9d00ff", text:"❓ من قال: 'لن أموت... قبل أن أقتل تلك الشخصية'؟ خمّن!", icon:"❓" },
+  { color:"#ffee00", text:"⚔️ قاتل بالكلام: دافع عن شخصيتك المفضلة في دقيقة!", icon:"⚔️" },
+  { color:"#00ff88", text:"🖼️ صف شخصية أنمي بثلاث كلمات فقط حتى يخمنها الجميع!", icon:"🖼️" },
+  { color:"#ff6600", text:"🎲 اذكر أنمي من كل حرف في اسمك الثلاثي!", icon:"🎲" },
+];
+
+// ── التصنيفات حسب النتيجة ──
+const RANKS = [
+  { min:0,  max:9,  emoji:"😅", title:"مبتدئ أنمي",     desc:"لا بأس! شاهد المزيد من الأنميات وعُد مجدداً. كل أسطورة تبدأ من الصفر!" },
+  { min:10, max:17, emoji:"👁️", title:"أوتاكو ناشئ",    desc:"ليس سيئاً! أنت على الطريق الصحيح نحو عالم الأنمي. استمر!" },
+  { min:18, max:24, emoji:"⚔️", title:"محارب الأنمي",   desc:"ممتاز! معلوماتك قوية جداً وأنت بالتأكيد من عشاق الأنمي الحقيقيين!" },
+  { min:25, max:29, emoji:"🔥", title:"أوتاكو محترف",   desc:"رائع جداً! أنت من النخبة في عالم الأنمي. تقريباً وصلت للقمة!" },
+  { min:30, max:30, emoji:"⭐", title:"أسطورة الأنمي !", desc:"أسطوري! الدرجة الكاملة! أنت حقاً إله الأنمي! 神様 (كامي-ساما)!" },
+];
+
+/* ══════════════════════════════════════════════
+   STARS
+══════════════════════════════════════════════ */
+(function(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<90;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=Math.random()*2.5+0.5;
+    const colors=['0,245,255','255,0,200','157,0,255','255,238,0','0,255,136'];
+    const col=colors[Math.floor(Math.random()*colors.length)];
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:rgba(${col},${Math.random()*.8+.2});animation-duration:${Math.random()*4+2}s;animation-delay:${Math.random()*6}s;`;
+    c.appendChild(s);
+  }
+})();
+
+/* ══════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  if(id==='leaderboard') renderLeaderboard();
+  if(id==='wheel') setTimeout(initWheel,50);
+}
+
+/* ══════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════ */
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function esc(s){ const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML; }
+function getRankByScore(s){ return (RANKS.find(r=>s>=r.min&&s<=r.max)||RANKS[0]).title; }
+
+/* ══════════════════════════════════════════════
+   QUIZ
+══════════════════════════════════════════════ */
+let qState={}, qTimer=null;
+
+function startQuiz(){
+  qState={
+    questions:shuffle(QUIZ_QUESTIONS).slice(0,30),
+    current:0, score:0
+  };
+  document.getElementById('quiz-start').style.display='none';
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-game').style.display='block';
+  renderQ();
+}
+
+function renderQ(){
+  const q=qState.questions[qState.current];
+  document.getElementById('q-num').textContent=qState.current+1;
+  document.getElementById('q-score').textContent=qState.score;
+  document.getElementById('q-category').textContent=`📂 ${q.cat}`;
+  document.getElementById('q-question').textContent=q.q;
+
+  // progress dots
+  const pd=document.getElementById('q-progress'); pd.innerHTML='';
+  for(let i=0;i<30;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<qState.current?' done':i===qState.current?' current':'');
+    pd.appendChild(d);
+  }
+
+  // options — randomize positions
+  const idxs=shuffle([0,1,2,3]);
+  const og=document.getElementById('q-options'); og.innerHTML='';
+  idxs.forEach(idx=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.textContent=q.opts[idx];
+    btn.onclick=()=>answerQ(idx,btn);
+    og.appendChild(btn);
+  });
+
+  startQTimer();
+}
+
+function startQTimer(){
+  clearInterval(qTimer);
+  let t=15;
+  const bar=document.getElementById('q-timer-bar');
+  const tel=document.getElementById('q-timer');
+  bar.style.width='100%'; bar.classList.remove('danger'); tel.textContent=t;
+  qTimer=setInterval(()=>{
+    t--;
+    tel.textContent=t;
+    bar.style.width=(t/15*100)+'%';
+    if(t<=5) bar.classList.add('danger');
+    if(t<=0){ clearInterval(qTimer); timeoutQ(); }
+  },1000);
+}
+
+function answerQ(chosen,btnEl){
+  clearInterval(qTimer);
+  const q=qState.questions[qState.current];
+  const all=document.querySelectorAll('#q-options .option-btn');
+  all.forEach(b=>{ b.disabled=true; if(q.opts.indexOf(b.textContent)===q.a) b.classList.add('correct'); });
+  if(chosen===q.a){ btnEl.classList.add('correct'); qState.score++; showToast('✅ إجابة صحيحة! +1'); }
+  else { btnEl.classList.add('wrong'); showToast('❌ إجابة خاطئة!'); }
+  setTimeout(nextQ,1300);
+}
+
+function timeoutQ(){
+  const q=qState.questions[qState.current];
+  const all=document.querySelectorAll('#q-options .option-btn');
+  all.forEach(b=>{ b.disabled=true; if(q.opts.indexOf(b.textContent)===q.a) b.classList.add('correct'); });
+  showToast('⏰ انتهى الوقت!');
+  setTimeout(nextQ,1300);
+}
+
+function nextQ(){
+  qState.current++;
+  if(qState.current>=30) return showQResult();
+  renderQ();
+}
+
+function showQResult(){
+  document.getElementById('quiz-game').style.display='none';
+  document.getElementById('quiz-result').style.display='block';
+  const s=qState.score;
+  const rank=RANKS.find(r=>s>=r.min&&s<=r.max)||RANKS[0];
+  document.getElementById('r-emoji').textContent=rank.emoji;
+  document.getElementById('r-rank').textContent=rank.title;
+  document.getElementById('r-score').textContent=s;
+  document.getElementById('r-desc').textContent=rank.desc;
+  window._qScore=s; window._qRank=rank.title;
+}
+
+function saveToLeaderboard(){
+  const name=prompt('أدخل اسمك لحفظ نتيجتك:','');
+  if(!name||!name.trim()){showToast('❗ أدخل اسمك أولاً');return;}
+  const s=window._qScore||0;
+  const lb=getLB();
+  lb.push({name:name.trim(),pts:s,rank:getRankByScore(s)});
+  lb.sort((a,b)=>b.pts-a.pts);
+  try{localStorage.setItem('animex_lb',JSON.stringify(lb.slice(0,20)));}catch(e){}
+  showToast('🏆 تم حفظ نتيجتك!');
+  showScreen('leaderboard');
+}
+
+/* ══════════════════════════════════════════════
+   CHARACTER GUESS
+══════════════════════════════════════════════ */
+let gState={};
+
+function startGuess(){
+  gState={chars:shuffle(CHARACTERS).slice(0,15),current:0,score:0};
+  document.getElementById('guess-start').style.display='none';
+  document.getElementById('guess-result').style.display='none';
+  document.getElementById('guess-game').style.display='block';
+  renderG();
+}
+
+function renderG(){
+  const ch=gState.chars[gState.current];
+  document.getElementById('g-num').textContent=gState.current+1;
+  document.getElementById('g-score').textContent=gState.score;
+  document.getElementById('g-char-img').textContent=ch.emoji;
+  document.getElementById('g-hint').textContent='💡 '+ch.hint+' | 📺 '+ch.anime;
+  const all=shuffle([ch.name,...ch.wrong.slice(0,3)]);
+  const og=document.getElementById('g-options'); og.innerHTML='';
+  all.forEach(name=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.textContent=name;
+    btn.onclick=()=>answerG(name===ch.name,btn,og,ch.name);
+    og.appendChild(btn);
+  });
+}
+
+function answerG(correct,btnEl,og,correctName){
+  og.querySelectorAll('.option-btn').forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===correctName) b.classList.add('correct');
+  });
+  if(correct){btnEl.classList.add('correct');gState.score++;showToast('✅ صحيح!');}
+  else{btnEl.classList.add('wrong');showToast('❌ خطأ! الإجابة: '+correctName);}
+  gState.current++;
+  if(gState.current>=15){
+    setTimeout(()=>{
+      document.getElementById('guess-game').style.display='none';
+      document.getElementById('guess-result').style.display='block';
+      document.getElementById('gr-score').textContent=gState.score;
+    },1400);
+  } else setTimeout(renderG,1400);
+}
+
+/* ══════════════════════════════════════════════
+   WHEEL
+══════════════════════════════════════════════ */
+let wAngle=0, wSpinning=false, wCtx;
+
+function initWheel(){
+  const canvas=document.getElementById('wheelCanvas');
+  if(!canvas) return;
+  wCtx=canvas.getContext('2d');
+  drawWheel(wAngle);
+}
+
+function drawWheel(angle){
+  if(!wCtx) return;
+  const n=WHEEL_CHALLENGES.length, arc=(2*Math.PI)/n, cx=150, cy=150, r=135;
+  wCtx.clearRect(0,0,300,300);
+  for(let i=0;i<n;i++){
+    const s=angle+i*arc, e=s+arc;
+    wCtx.beginPath(); wCtx.moveTo(cx,cy); wCtx.arc(cx,cy,r,s,e); wCtx.closePath();
+    wCtx.fillStyle=WHEEL_CHALLENGES[i].color; wCtx.fill();
+    wCtx.strokeStyle='rgba(0,0,0,.35)'; wCtx.lineWidth=2; wCtx.stroke();
+    wCtx.save(); wCtx.translate(cx,cy); wCtx.rotate(s+arc/2);
+    wCtx.textAlign='right'; wCtx.fillStyle='rgba(0,0,0,.8)';
+    wCtx.font='bold 18px Arial'; wCtx.fillText(WHEEL_CHALLENGES[i].icon,r-10,6);
+    wCtx.restore();
+  }
+  wCtx.beginPath(); wCtx.arc(cx,cy,22,0,2*Math.PI);
+  wCtx.fillStyle='#050510'; wCtx.fill();
+  wCtx.strokeStyle='#00f5ff'; wCtx.lineWidth=3; wCtx.stroke();
+  wCtx.fillStyle='#00f5ff'; wCtx.font='bold 15px Arial';
+  wCtx.textAlign='center'; wCtx.textBaseline='middle';
+  wCtx.fillText('X',cx,cy);
+}
+
+function spinWheel(){
+  if(wSpinning) return;
+  wSpinning=true;
+  document.getElementById('spin-btn').disabled=true;
+  const cd=document.getElementById('challenge-display');
+  cd.innerHTML='<span class="challenge-placeholder">🌀 يتم الاختيار...</span>';
+  cd.classList.remove('revealed');
+  const total=(Math.floor(Math.random()*5)+5)*2*Math.PI+Math.random()*2*Math.PI;
+  const dur=4200, start=performance.now(), startA=wAngle;
+  function anim(now){
+    const p=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-p,3);
+    wAngle=startA+total*ease;
+    drawWheel(wAngle);
+    if(p<1){ requestAnimationFrame(anim); }
+    else {
+      wAngle=startA+total; wSpinning=false;
+      document.getElementById('spin-btn').disabled=false;
+      revealChallenge(wAngle);
+    }
+  }
+  requestAnimationFrame(anim);
+}
+
+function revealChallenge(angle){
+  const n=WHEEL_CHALLENGES.length, arc=(2*Math.PI)/n;
+  let norm=((-angle-Math.PI/2)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+  const idx=Math.floor(norm/arc)%n;
+  const ch=WHEEL_CHALLENGES[idx];
+  const cd=document.getElementById('challenge-display');
+  cd.innerHTML=`<span class="challenge-text">${ch.text}</span>`;
+  cd.classList.add('revealed');
+  showToast('🎯 تحديك الجديد!');
+}
+
+/* ══════════════════════════════════════════════
+   LEADERBOARD
+══════════════════════════════════════════════ */
+function getLB(){ try{return JSON.parse(localStorage.getItem('animex_lb'))||[];}catch{return [];} }
+
+function addToLeaderboard(){
+  const name=document.getElementById('lb-name').value.trim();
+  const pts=parseInt(document.getElementById('lb-pts').value)||0;
+  if(!name){showToast('❗ أدخل اسمك أولاً');return;}
+  const lb=getLB();
+  lb.push({name,pts,rank:getRankByScore(pts)});
+  lb.sort((a,b)=>b.pts-a.pts);
+  try{localStorage.setItem('animex_lb',JSON.stringify(lb.slice(0,20)));}catch(e){}
+  document.getElementById('lb-name').value='';
+  document.getElementById('lb-pts').value='';
+  showToast('✅ تمت الإضافة!');
+  renderLeaderboard();
+}
+
+function renderLeaderboard(){
+  const lb=getLB();
+  const tbody=document.getElementById('lb-tbody');
+  const empty=document.getElementById('lb-empty');
+  tbody.innerHTML='';
+  if(!lb.length){empty.style.display='block';return;}
+  empty.style.display='none';
+  lb.forEach((p,i)=>{
+    const bc=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
+    const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="rank-badge ${bc}">${typeof med==='string'?med:i+1}</span></td><td class="player-name">${esc(p.name)}</td><td class="player-pts">${p.pts}</td><td style="font-size:.8rem;color:var(--text-dim)">${esc(p.rank||'')}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   SHARE
+══════════════════════════════════════════════ */
+function shareResult(type){
+  let text='';
+  if(type==='quiz'){
+    const s=window._qScore??0, rank=window._qRank||'مبتدئ';
+    text=`🎌 لعبت اختبار الأنمي على صفحة Anime X!\n\n🏆 حصلت على ${s}/30 نقطة\n🎖️ رتبتي: ${rank}\n\n⚡ هل تقدر تتفوق عليّ؟ جرّب الاختبار الآن!\n\n#AnimeX #اختبار_الأنمي #أوتاكو`;
+  } else {
+    const s=gState.score??0;
+    text=`🎭 لعبت تخمين شخصيات الأنمي على صفحة Anime X!\n\n⭐ أجبت صح على ${s} من 15 شخصية!\n🎯 هل تعرف أنمي أكثر مني؟ جرّب الآن!\n\n#AnimeX #تخمين_الأنمي #أنمي`;
+  }
+  const fbUrl='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent('https://www.facebook.com/AnimeX')+'&quote='+encodeURIComponent(text);
+  window.open(fbUrl,'_blank','width=620,height=440,left=200,top=100');
+}
+
+/* ══════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════ */
+let _toastT=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* INIT */
+initWheel();
+renderLeaderboard();
+</script>
+</body>
+</html>
